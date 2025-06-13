@@ -1,20 +1,45 @@
 # DGX Radar 2025
 
-An interactive React application that visualizes digital skills and technologies in a radar diagram format, designed for government digital transformation initiatives.
+An interactive React application that visualizes digital skills and technologies in a radar diagram format, designed for government digital transformation initiatives. This enhanced version includes comprehensive tooltips, visual indicators for new items, non-overlapping blips, and a data view/download feature.
 
 ## Features
 
-- Fetches data from a published Google Sheets document
-- Visualizes data in an interactive radar diagram with distinct, non-overlapping rings
-- Color-coded rings with a gradient from red (innermost) to blue-grey (outermost)
-- Displays comprehensive item details on hover (name, quadrant, ring, theme, proximity, description)
-- Highlights new items with visual indicators (yellow border, star symbol, "New" badge)
-- Shows detailed information in a modal window when clicking on items
-- Supports Markdown formatting in descriptions
-- Includes a "View Raw Data" feature to see and download the complete dataset
-- Implements collision detection to prevent overlapping blips for better usability
+### Visualization Enhancements
+- Interactive radar diagram with distinct, non-overlapping annular rings
+- Color-coded rings with a gradient from red (innermost) to blue-grey (outermost):
+  - Innermost ring ('0-6m'): Red (#ff3333)
+  - Second ring ('6-12m'): Lighter red (#ff6666)
+  - Third ring ('1-2y'): Light blue-grey (#9999cc)
+  - Outermost ring ('3y+'): Passive blue-grey (#7a7a9e)
+- Collision detection algorithm to prevent overlapping blips for better usability
+- Quadrant labels with clear bounding boxes and improved visibility
 - Responsive design that works on various screen sizes
+
+### Data Display
+- Comprehensive tooltips showing item details on hover:
+  - Name, quadrant, ring
+  - Theme and proximity (if available)
+  - Description with Markdown formatting
+  - Status indicators
+- Detailed modal window when clicking on items
+- Visual indicators for new items:
+  - Yellow border (2px vs 1px for regular items)
+  - Star symbol (★) above new items
+  - "New" badge in both tooltip and modal window
+- Support for status field with orange background
+
+### Data Management
+- Fetches data from a published Google Sheets document
+- "View Raw Data" feature accessible from the footer:
+  - Displays all data in a nicely formatted table
+  - Proper column headers (including "isNew" field)
+  - Download button for JSON data export
 - Fallback to sample data if the Google Sheets data cannot be loaded
+
+### Development & Deployment
+- Automated deployment script for GitHub and Vercel
+- Vercel configuration for seamless deployment
+- Comprehensive documentation
 
 ## Getting Started
 
@@ -103,42 +128,167 @@ npm run build
 
 This will create a `build` directory with optimized production files.
 
+## Recent Enhancements
+
+The following enhancements have been implemented in this version:
+
+1. **Tooltip Improvements**
+   - Added comprehensive information display on hover
+   - Styled to match the modal window's appearance
+   - Added support for Markdown formatting in descriptions
+
+2. **Ring Visualization**
+   - Changed the order of rings to create a logical progression
+   - Implemented annular rings (donut shapes) to prevent color overlapping
+   - Added semi-transparent fill (20% opacity) for better visual distinction
+
+3. **New Item Indicators**
+   - Added yellow stroke around new items
+   - Implemented star symbol above new items
+   - Added "New" badge in tooltip and modal window
+   - Updated code to check for 'TRUE' string value for isNew flag
+
+4. **Data Visualization**
+   - Removed cardinal direction indicators (N/S/E/W) for cleaner appearance
+   - Implemented collision detection to prevent overlapping blips
+   - Enhanced quadrant labels with better styling and positioning
+
+5. **Raw Data Access**
+   - Added "View Raw Data" link in the footer
+   - Created modal window for data display with proper formatting
+   - Implemented JSON download functionality
+
 ## Deployment
 
-### Deploying to Vercel
+### Automated Deployment
 
-This project is configured for easy deployment to Vercel:
+This project includes a deployment script (`deploy.sh`) that automates the process of deploying to GitHub and Vercel:
 
-1. Create an account on [Vercel](https://vercel.com/) if you don't have one
-2. Install the Vercel CLI:
+1. Make the script executable:
+   ```
+   chmod +x deploy.sh
+   ```
+
+2. Run the script:
+   ```
+   ./deploy.sh
+   ```
+
+3. The script will:
+   - Initialize a git repository if needed
+   - Add and commit your files
+   - Check if the GitHub repository exists
+   - Create the repository if it doesn't exist
+   - Push your code to GitHub
+   - Deploy to Vercel if the CLI is installed
+
+### Manual Deployment to Vercel
+
+If you prefer to deploy manually to Vercel:
+
+1. Install the Vercel CLI:
    ```
    npm install -g vercel
    ```
-3. Login to Vercel:
+
+2. Login to Vercel:
    ```
    vercel login
    ```
-4. Deploy the project:
+
+3. Deploy the project:
    ```
    vercel
    ```
-5. For production deployment:
-   ```
-   vercel --prod
-   ```
+
+### Vercel Configuration
+
+The `vercel.json` file contains the configuration for Vercel deployment:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/robots.txt"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
+```
+
+This configuration ensures that:
+- The React application is built correctly
+- Static assets are served properly
+- Client-side routing works as expected
+- All routes are directed to the main application
 
 ### Environment Variables
 
 No environment variables are required for basic functionality. The application uses a fallback to sample data if the Google Sheets data cannot be loaded.
 
+## Project Structure
+
+The project is organized as follows:
+
+```
+dgx-radar-2025/
+├── public/                  # Static assets
+├── src/                     # Source code
+│   ├── components/          # React components
+│   │   ├── DataModal.js     # Raw data display modal
+│   │   ├── DetailView.js    # Item detail modal
+│   │   ├── Header.js        # Application header
+│   │   ├── LoadingSpinner.js # Loading indicator
+│   │   └── RadarChart.js    # Main radar visualization
+│   ├── data/                # Data sources
+│   │   └── sampleData.js    # Fallback sample data
+│   ├── services/            # Service modules
+│   │   └── DataService.js   # Data fetching service
+│   ├── App.js               # Main application component
+│   ├── App.css              # Application styles
+│   └── index.js             # Application entry point
+├── deploy.sh                # Deployment script
+├── vercel.json              # Vercel configuration
+├── package.json             # Project dependencies
+└── README.md                # Project documentation
+```
+
 ## Technologies Used
 
-- React
-- D3.js for visualization
-- Styled Components for styling
-- Axios for HTTP requests
-- Marked for parsing Markdown content
-- Blob API for data downloads
+- **React**: Frontend framework for building the user interface
+- **D3.js**: Visualization library for creating the radar chart
+- **Styled Components**: CSS-in-JS library for component styling
+- **Axios**: HTTP client for fetching data from Google Sheets
+- **Marked**: Library for parsing Markdown content in descriptions
+- **Blob API**: For generating downloadable data files
+- **GitHub CLI/API**: For repository creation and management
+- **Vercel**: For hosting and deployment
 
 ## License
 
