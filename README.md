@@ -1,70 +1,145 @@
-# Getting Started with Create React App
+# DGX Radar 2025
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An interactive React application that visualizes digital skills and technologies in a radar diagram format, designed for government digital transformation initiatives.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Fetches data from a published Google Sheets document
+- Visualizes data in an interactive radar diagram with distinct, non-overlapping rings
+- Color-coded rings with a gradient from red (innermost) to blue-grey (outermost)
+- Displays comprehensive item details on hover (name, quadrant, ring, theme, proximity, description)
+- Highlights new items with visual indicators (yellow border, star symbol, "New" badge)
+- Shows detailed information in a modal window when clicking on items
+- Supports Markdown formatting in descriptions
+- Includes a "View Raw Data" feature to see and download the complete dataset
+- Implements collision detection to prevent overlapping blips for better usability
+- Responsive design that works on various screen sizes
+- Fallback to sample data if the Google Sheets data cannot be loaded
 
-### `npm start`
+## Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Node.js (v14 or higher)
+- npm (v6 or higher)
 
-### `npm test`
+### Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Clone the repository:
+   ```
+   git clone https://github.com/harl00/dgx-radar-2025.git
+   cd dgx-radar-2025
+   ```
 
-### `npm run build`
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. Start the development server:
+   ```
+   npm start
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4. Open your browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Data Structure
 
-### `npm run eject`
+The application expects the Google Sheets data to have the following columns:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **quadrant**: The quadrant of the radar visualization (e.g., "legacy", "resiliency", "culture", "platforms")
+- **ring**: The concentric ring (e.g., "0-6m", "6-12m", "1-2y", "3y+")
+- **name**: The name of the item
+- **description**: Markdown-formatted description that appears on hover and in the detail view
+- **isNew**: Set to 'TRUE' to mark an item as new (will display with special indicators)
+- **theme** (optional): Theme or category the item belongs to
+- **proximity** (optional): Proximity or relevance indicator
+- **status** (optional): Status information for the item
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Additional custom fields can be added and will be displayed in both the tooltip and detail view.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Google Sheets Integration
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Sample Data Fallback
 
-## Learn More
+The application includes a sample data fallback mechanism. If the Google Sheets data cannot be loaded (due to URL issues, CORS restrictions, or other problems), the application will automatically use the sample data defined in `src/data/sampleData.js`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Configuring a Working Google Sheets URL
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To use your own Google Sheets data:
 
-### Code Splitting
+1. Create a Google Sheet with the required columns (quadrant, ring, name, description)
+2. Make the sheet public by going to File > Share > Publish to web
+3. Select the appropriate sheet and publish it
+4. Update the URL in `src/services/DataService.js`:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```javascript
+// For a real application, you would use a different approach:
+// 1. Use the Google Sheets API with an API key
+// 2. Export the sheet as CSV and host it on your server
+// 3. Use a proxy server to avoid CORS issues
 
-### Analyzing the Bundle Size
+this.url = 'YOUR_GOOGLE_SHEETS_PUBLIC_URL';
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Alternative Approaches
 
-### Making a Progressive Web App
+For a production application, consider these more robust approaches:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. **Google Sheets API**: Use the official API with authentication
+2. **CSV Export**: Export the sheet as CSV and host it on your server
+3. **Backend Proxy**: Create a simple backend service to fetch and serve the data
 
-### Advanced Configuration
+## Building for Production
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+To create a production build:
 
-### Deployment
+```
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+This will create a `build` directory with optimized production files.
 
-### `npm run build` fails to minify
+## Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Deploying to Vercel
+
+This project is configured for easy deployment to Vercel:
+
+1. Create an account on [Vercel](https://vercel.com/) if you don't have one
+2. Install the Vercel CLI:
+   ```
+   npm install -g vercel
+   ```
+3. Login to Vercel:
+   ```
+   vercel login
+   ```
+4. Deploy the project:
+   ```
+   vercel
+   ```
+5. For production deployment:
+   ```
+   vercel --prod
+   ```
+
+### Environment Variables
+
+No environment variables are required for basic functionality. The application uses a fallback to sample data if the Google Sheets data cannot be loaded.
+
+## Technologies Used
+
+- React
+- D3.js for visualization
+- Styled Components for styling
+- Axios for HTTP requests
+- Marked for parsing Markdown content
+- Blob API for data downloads
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
