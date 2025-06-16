@@ -89,7 +89,7 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
     svg.selectAll('*').remove();
 
     const { width, height } = dimensions;
-    const radius = Math.min(width, height) / 2 * 0.8;
+    const radius = Math.min(width, height) / 2 * 0.88; // Increased by 10% to fill more of the screen without exceeding the bounding box
     const centerX = width / 2;
     const centerY = height / 2;
 
@@ -130,14 +130,16 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
         .attr('stroke-width', 2)
         .attr('stroke-opacity', 0.7);
 
-      // Add ring labels
+      // Add ring labels with increased size and prominence
       chart.append('text')
         .attr('x', 0)
-        .attr('y', -ringScale(i + 1) - 5)
+        .attr('y', -ringScale(i + 1) - 10) // Moved further out to accommodate larger text
         .attr('text-anchor', 'middle')
-        .attr('font-size', '12px')
+        .attr('font-size', '18px') // Increased font size even more
         .attr('fill', ringColor)
         .attr('font-weight', 'bold')
+        .attr('stroke', '#ffffff') // Add white stroke for better visibility
+        .attr('stroke-width', '0.7px')
         .text(ring);
     });
 
@@ -146,55 +148,114 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
     
     // No cardinal direction indicators (N/S/E/W) as requested
     
-    // Draw quadrant lines and labels
+    // First pass: calculate maximum dimensions needed for any quadrant label
+    const lineHeight = 20;
+    const padding = 15;
+    let maxBoxWidth = 0;
+    let maxBoxHeight = 0;
+    const quadrantLabelData = [];
+    
+    // Process all quadrant labels to determine max dimensions and store data for rendering
     quadrants.forEach((quadrant, i) => {
       const angle = i * angleStep - Math.PI / 2; // Start from top
       
-      // Draw quadrant line
+      // Convert quadrant name to CamelCase
+      const camelCaseQuadrant = quadrant.charAt(0).toUpperCase() + quadrant.slice(1);
+      
+      // Handle text wrapping for long quadrant names
+      const maxLineLength = 15; // Maximum characters per line
+      let lines = [];
+      let words = camelCaseQuadrant.split(' ');
+      let currentLine = words[0];
+      
+      // Create wrapped text lines
+      for (let j = 1; j < words.length; j++) {
+        if (currentLine.length + words[j].length + 1 <= maxLineLength) {
+          currentLine += ' ' + words[j];
+        } else {
+          lines.push(currentLine);
+          currentLine = words[j];
+        }
+      }
+      lines.push(currentLine); // Add the last line
+      
+      // Calculate box dimensions for this label
+      const thisBoxWidth = Math.max(...lines.map(line => line.length * 8)) + padding * 2;
+      const thisBoxHeight = lines.length * lineHeight + padding * 1.5;
+      
+      // Update maximum dimensions if needed
+      maxBoxWidth = Math.max(maxBoxWidth, thisBoxWidth);
+      maxBoxHeight = Math.max(maxBoxHeight, thisBoxHeight);
+      
+      // Store data for this quadrant label
+      quadrantLabelData.push({
+        angle,
+        lines,
+        quadrant
+      });
+    });
+    
+    // Add 10% padding to max dimensions to ensure all text fits comfortably
+    maxBoxWidth = Math.ceil(maxBoxWidth * 1.1);
+    maxBoxHeight = Math.ceil(maxBoxHeight * 1.1);
+    
+    // Second pass: draw quadrant lines and labels with consistent box sizes
+    quadrantLabelData.forEach(({ angle, lines, quadrant }, i) => {
+      // Draw quadrant line with increased prominence
       chart.append('line')
         .attr('x1', 0)
         .attr('y1', 0)
         .attr('x2', radius * Math.cos(angle))
         .attr('y2', radius * Math.sin(angle))
-        .attr('stroke', '#ddd')
-        .attr('stroke-width', 1)
-        .attr('stroke-dasharray', '3,3'); // Make the lines dashed for better visual distinction
+        .attr('stroke', '#666') // Darker color for better visibility
+        .attr('stroke-width', 2.5) // Increased width
+        .attr('stroke-opacity', 0.8); // Slightly transparent
+        
+      // Add subtle quadrant background to further distinguish quadrants
+      const quadrantArc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius)
+        .startAngle(angle)
+        .endAngle(angle + angleStep);
+        
+      chart.append('path')
+        .attr('d', quadrantArc)
+        .attr('fill', i % 2 === 0 ? '#f8f8f8' : '#f0f0f0') // Alternate subtle background colors
+        .attr('fill-opacity', 0.4)
+        .attr('stroke', 'none')
+        .lower(); // Push to back so it doesn't overlap other elements
       
-      // Convert quadrant name to CamelCase
-      const camelCaseQuadrant = quadrant.charAt(0).toUpperCase() + quadrant.slice(1);
-      
-      // Calculate label position - move further from the edge
-      const labelRadius = radius * 1.25; // Increased from 1.1 to 1.25
+      // Calculate label position - exact same distance from radar edge for all labels
+      const labelRadius = radius * 1.3; // Increased consistent distance from radar edge
       const labelX = labelRadius * Math.cos(angle + angleStep / 2);
       const labelY = labelRadius * Math.sin(angle + angleStep / 2);
       
-      // Add label background box - larger and more prominent
-      const padding = 15; // Increased from 10 to 15
-      const boxWidth = camelCaseQuadrant.length * 12 + padding * 2; // Increased text size multiplier
-      const boxHeight = 40; // Increased from 30 to 40
-      
+      // Add label background box with consistent size
       chart.append('rect')
-        .attr('x', labelX - boxWidth / 2)
-        .attr('y', labelY - boxHeight / 2)
-        .attr('width', boxWidth)
-        .attr('height', boxHeight)
-        .attr('rx', 8) // Increased rounded corners
+        .attr('x', labelX - maxBoxWidth / 2)
+        .attr('y', labelY - maxBoxHeight / 2)
+        .attr('width', maxBoxWidth)
+        .attr('height', maxBoxHeight)
+        .attr('rx', 8)
         .attr('ry', 8)
         .attr('fill', 'white')
-        .attr('stroke', '#ccc') // Darker border
-        .attr('stroke-width', 2) // Thicker border
-        .attr('filter', 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))'); // Add subtle shadow
+        .attr('stroke', '#ccc')
+        .attr('stroke-width', 2)
+        .attr('filter', 'drop-shadow(0px 2px 3px rgba(0,0,0,0.2))');
       
-      // Add quadrant label - larger text
-      chart.append('text')
-        .attr('x', labelX)
-        .attr('y', labelY)
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'central')
-        .attr('font-size', '16px') // Increased from 14px to 16px
-        .attr('font-weight', 'bold')
-        .attr('fill', '#333')
-        .text(camelCaseQuadrant);
+      // Add multi-line quadrant label text
+      lines.forEach((line, lineIndex) => {
+        const yOffset = (lineIndex - (lines.length - 1) / 2) * lineHeight;
+        chart.append('text')
+          .attr('x', labelX)
+          .attr('y', labelY + yOffset)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'central')
+          .attr('font-size', '14px')
+          .attr('font-weight', 'bold')
+          .attr('fill', '#333')
+          .text(line);
+      });
     });
 
     // Store all blip positions to avoid overlaps
@@ -211,13 +272,60 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
       });
     };
     
+    // Function to check if a position is too close to timeline labels
+    const isTooCloseToLabels = (x, y) => {
+      // Check for each ring label (positioned at the top of each ring)
+      return rings.some((ring, i) => {
+        // Label position is at (0, -ringScale(i + 1) - 10)
+        const labelX = 0;
+        const labelY = -ringScale(i + 1) - 10;
+        
+        // Calculate distance to label
+        const dx = labelX - x;
+        const dy = labelY - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Create a larger exclusion zone around labels
+        // The size depends on the ring - larger rings need larger exclusion zones
+        const exclusionRadius = 40 + (i * 5); // Increasing exclusion zone for outer rings
+        
+        return distance < exclusionRadius;
+      });
+    };
+    
     // Function to find a valid position for a blip
     const findValidPosition = (quadrantIndex, ringIndex) => {
-      // Try up to 50 times to find a non-overlapping position
-      for (let attempt = 0; attempt < 50; attempt++) {
+      // Try up to 100 times to find a non-overlapping position that's not near labels
+      for (let attempt = 0; attempt < 100; attempt++) {
         // Calculate position with some randomness
-        const angleVariance = angleStep * 0.8; // Use 80% of the quadrant angle for variance
-        const angle = quadrantIndex * angleStep - Math.PI / 2 + (angleStep / 2) + (angleVariance * (Math.random() - 0.5));
+        // Avoid the top area where labels are positioned by restricting the angle
+        // For the top quadrant (quadrantIndex 0), avoid angles near -PI/2 (top)
+        
+        let angle;
+        const isTopQuadrant = (quadrantIndex === 0 || quadrantIndex === (quadrants.length - 1));
+        
+        if (isTopQuadrant) {
+          // For top quadrants, avoid the very top area (where labels are)
+          // Generate angle that's at least 30 degrees (PI/6 radians) away from the top
+          const avoidAngle = -Math.PI / 2; // Top of the circle
+          const minOffset = Math.PI / 6; // 30 degrees
+          
+          // Generate angle within the quadrant but avoiding the top
+          const baseAngle = quadrantIndex * angleStep - Math.PI / 2;
+          const angleRange = angleStep - minOffset;
+          
+          if (Math.random() < 0.5) {
+            // Left side of the avoidance zone
+            angle = baseAngle + (angleRange * Math.random());
+          } else {
+            // Right side of the avoidance zone
+            angle = baseAngle + minOffset + (angleRange * Math.random());
+          }
+        } else {
+          // For other quadrants, use the normal angle calculation
+          const angleVariance = angleStep * 0.8;
+          angle = quadrantIndex * angleStep - Math.PI / 2 + (angleStep / 2) + (angleVariance * (Math.random() - 0.5));
+        }
         
         // Calculate distance with some randomness within the ring
         const ringStart = ringIndex;
@@ -228,28 +336,58 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
         const x = distance * Math.cos(angle);
         const y = distance * Math.sin(angle);
         
-        // If this position is not too close to any existing blip, use it
-        if (!isTooClose(x, y)) {
+        // If this position is not too close to any existing blip or label, use it
+        if (!isTooClose(x, y) && !isTooCloseToLabels(x, y)) {
           blipPositions.push({ x, y });
           return { x, y };
         }
       }
       
-      // If we couldn't find a non-overlapping position after 50 attempts,
-      // use the last attempted position and slightly adjust it
-      const angle = quadrantIndex * angleStep - Math.PI / 2 + (angleStep / 2) * Math.random();
+      // If we couldn't find a non-overlapping position after 100 attempts,
+      // try one more time with a position that at least avoids the labels
+      for (let attempt = 0; attempt < 50; attempt++) {
+        // Similar to above but only check for label proximity
+        let angle;
+        const isTopQuadrant = (quadrantIndex === 0 || quadrantIndex === (quadrants.length - 1));
+        
+        if (isTopQuadrant) {
+          const baseAngle = quadrantIndex * angleStep - Math.PI / 2;
+          const minOffset = Math.PI / 6;
+          const angleRange = angleStep - minOffset;
+          
+          if (Math.random() < 0.5) {
+            angle = baseAngle + (angleRange * Math.random());
+          } else {
+            angle = baseAngle + minOffset + (angleRange * Math.random());
+          }
+        } else {
+          const angleVariance = angleStep * 0.8;
+          angle = quadrantIndex * angleStep - Math.PI / 2 + (angleStep / 2) + (angleVariance * (Math.random() - 0.5));
+        }
+        
+        const ringStart = ringIndex;
+        const normalizedPos = 0.3 + 0.4 * Math.random();
+        const distance = ringScale(ringStart + normalizedPos);
+        
+        const x = distance * Math.cos(angle);
+        const y = distance * Math.sin(angle);
+        
+        // Only check if it's not too close to labels
+        if (!isTooCloseToLabels(x, y)) {
+          blipPositions.push({ x, y });
+          return { x, y };
+        }
+      }
+      
+      // Last resort: use a position in the bottom half of the chart
+      const angle = Math.PI / 2 + (Math.random() - 0.5); // Around the bottom
       const distance = ringScale(ringIndex + 0.3 + 0.4 * Math.random());
       
       const x = distance * Math.cos(angle);
       const y = distance * Math.sin(angle);
       
-      // Add a small offset to reduce the chance of exact overlap
-      const offset = minDistance * 0.5;
-      const offsetX = x + offset * (Math.random() - 0.5);
-      const offsetY = y + offset * (Math.random() - 0.5);
-      
-      blipPositions.push({ x: offsetX, y: offsetY });
-      return { x: offsetX, y: offsetY };
+      blipPositions.push({ x, y });
+      return { x, y };
     };
     
     // Plot the items
@@ -350,9 +488,15 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
         
         metaItemsHtml += `</div>`;
         
+        // Calculate tooltip dimensions to check if it would be cut off at screen bottom
+        const tooltipHeight = 150; // Approximate height of tooltip
+        const viewportHeight = window.innerHeight;
+        const isNearBottom = (event.pageY + tooltipHeight + 20) > viewportHeight;
+        
+        // Position tooltip above cursor if near bottom of screen, otherwise below
         tooltip
           .style('left', `${event.pageX + 10}px`)
-          .style('top', `${event.pageY + 10}px`)
+          .style('top', isNearBottom ? `${event.pageY - tooltipHeight - 10}px` : `${event.pageY + 10}px`)
           .style('opacity', 1)
           .html(`
             <div style="font-weight: bold; font-size: 16px; margin-bottom: 8px; color: #333;">
