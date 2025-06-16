@@ -104,6 +104,9 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
     const ringScale = d3.scaleLinear()
       .domain([0, rings.length])
       .range([0, radius]);
+      
+    // Store ring label data to add after quadrant lines
+    const ringLabelData = [];
 
     // Draw rings as annular rings (rings with holes) to prevent overlapping
     rings.forEach((ring, i) => {
@@ -129,18 +132,14 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
         .attr('stroke', ringColor)
         .attr('stroke-width', 2)
         .attr('stroke-opacity', 0.7);
-
-      // Add ring labels with increased size and prominence
-      chart.append('text')
-        .attr('x', 0)
-        .attr('y', -ringScale(i + 1) - 10) // Moved further out to accommodate larger text
-        .attr('text-anchor', 'middle')
-        .attr('font-size', '18px') // Increased font size even more
-        .attr('fill', ringColor)
-        .attr('font-weight', 'bold')
-        .attr('stroke', '#ffffff') // Add white stroke for better visibility
-        .attr('stroke-width', '0.7px')
-        .text(ring);
+      
+      // Store ring label data to add after quadrant lines (so they appear in front)
+      const labelY = -ringScale(i + 1) - 10;
+      ringLabelData.push({
+        ring,
+        ringColor,
+        labelY
+      });
     });
 
     // Draw the quadrant lines and cardinal direction indicators
@@ -256,6 +255,39 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
           .attr('fill', '#333')
           .text(line);
       });
+    });
+    
+    // Add ring labels with increased size and prominence (after quadrant lines so they appear in front)
+    ringLabelData.forEach(({ ring, ringColor, labelY }) => {
+      // Add background box for ring label
+      const labelWidth = ring.length * 14; // Approximate width based on text length
+      const labelHeight = 28; // Fixed height for all labels
+      
+      // Add label background box
+      chart.append('rect')
+        .attr('x', -labelWidth / 2)
+        .attr('y', labelY - labelHeight / 2)
+        .attr('width', labelWidth)
+        .attr('height', labelHeight)
+        .attr('rx', 6)
+        .attr('ry', 6)
+        .attr('fill', 'white')
+        .attr('stroke', ringColor)
+        .attr('stroke-width', 1.5)
+        .attr('fill-opacity', 0.9);
+      
+      // Add ring label text on top of background
+      chart.append('text')
+        .attr('x', 0)
+        .attr('y', labelY)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'central')
+        .attr('font-size', '18px')
+        .attr('fill', ringColor)
+        .attr('font-weight', 'bold')
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', '0.7px')
+        .text(ring);
     });
 
     // Store all blip positions to avoid overlaps
