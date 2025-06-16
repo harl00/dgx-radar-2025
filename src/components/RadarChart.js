@@ -307,7 +307,7 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
         if (isTopQuadrant) {
           // For top quadrants, avoid the very top area (where labels are)
           // Generate angle that's at least 30 degrees (PI/6 radians) away from the top
-          const avoidAngle = -Math.PI / 2; // Top of the circle
+          // -Math.PI / 2 is the top of the circle
           const minOffset = Math.PI / 6; // 30 degrees
           
           // Generate angle within the quadrant but avoiding the top
@@ -352,7 +352,7 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
         
         if (isTopQuadrant) {
           const baseAngle = quadrantIndex * angleStep - Math.PI / 2;
-          const minOffset = Math.PI / 6;
+          const minOffset = Math.PI / 6; // 30 degrees away from top
           const angleRange = angleStep - minOffset;
           
           if (Math.random() < 0.5) {
