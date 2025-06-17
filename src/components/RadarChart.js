@@ -35,6 +35,10 @@ const Tooltip = styled.div`
     padding-left: 1.5em;
   }
   
+  li {
+    margin: 0.1em 0; /* Reduce space between list items */
+  }
+  
   pre, code {
     background-color: #f5f5f5;
     border-radius: 3px;
