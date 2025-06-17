@@ -31,7 +31,7 @@ const RadarPrintChart = ({ data, rings, quadrants }) => {
   const svgRef = useRef(null);
 
   // Helper function to get color for ring - gradient from red to blue-grey
-  const getColorForRing = (ring) => {
+  const getColorForRing = React.useCallback((ring) => {
     let color;
     switch(ring) {
       case '0-6m': // Closest to center
@@ -50,13 +50,13 @@ const RadarPrintChart = ({ data, rings, quadrants }) => {
         color = '#999999'; // Default gray
     }
     return color;
-  };
+  }, []);
 
   // Function to get text color for ring (for contrast)
-  const getRingTextColor = () => {
+  const getRingTextColor = React.useCallback(() => {
     // All rings have white text for better contrast
     return '#ffffff';
-  };
+  }, []);
 
   // Draw the radar chart
   useEffect(() => {

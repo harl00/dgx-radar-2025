@@ -142,14 +142,11 @@ function App() {
             return; // Exit early if successful
           }
         } catch (err) {
-          console.error('Error fetching data from Google Sheets:', err);
-          // Continue to fallback data
+          // Error fetching data from Google Sheets, continue to fallback data
         }
         
         // If we reach here, either the fetch failed or returned no data
         // Use sample data as fallback
-        console.log('Using sample data visualization');
-        console.log('Sample data:', sampleData);
         setData(sampleData);
         
         // Extract unique quadrants from sample data
@@ -158,15 +155,12 @@ function App() {
         // Set rings in the desired order
         const orderedRings = ['0-6m', '6-12m', '1-2y', '3y+'];
         
-        console.log('Rings in order:', orderedRings);
-        
         setRings(orderedRings);
         setQuadrants(uniqueQuadrants);
         
         setError('Note: Using sample data for visualization. In a production environment, you would connect to a valid Google Sheets URL.');
         setLoading(false);
       } catch (err) {
-        console.error('Unexpected error:', err);
         setError('An unexpected error occurred. Please try again later.');
         setLoading(false);
       }

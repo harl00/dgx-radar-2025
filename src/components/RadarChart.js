@@ -62,7 +62,6 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
 
   // Helper function to get color for ring - gradient from red to blue-grey
   const getColorForRing = useCallback((ring) => {
-    console.log('Getting color for ring:', ring);
     let color;
     switch(ring) {
       case '0-6m': // Closest to center
@@ -80,7 +79,6 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
       default:
         color = '#999999'; // Default gray
     }
-    console.log('Color for ring', ring, ':', color);
     return color;
   }, []);
 
@@ -108,9 +106,7 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
   useEffect(() => {
     if (!data || data.length === 0 || !rings || !quadrants || dimensions.width === 0) return;
 
-    // Debug: Log the data to see if isNew flag is present
-    console.log('RadarChart data:', data);
-    console.log('Items with isNew flag:', data.filter(item => item.isNew));
+    // No debug logs in production
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
