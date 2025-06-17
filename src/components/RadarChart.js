@@ -570,11 +570,16 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
             // First, replace any literal \n with actual newlines
             let processedDescription = item.description.replace(/\\n/g, '\n');
             
-            // Then replace any double newlines with a special marker
-            processedDescription = processedDescription.replace(/\n\n/g, '<br><br>');
+            // Process markdown list items (lines starting with *)
+            // We need to ensure that lines starting with * are properly processed as list items
+            // This regex looks for newlines followed by * and preserves them for markdown processing
+            processedDescription = processedDescription.replace(/\n\s*\*\s+/g, '\n* ');
             
-            // Replace single newlines with a line break
-            processedDescription = processedDescription.replace(/\n/g, '<br>');
+            // Then replace any double newlines with a special marker (but not before list items)
+            processedDescription = processedDescription.replace(/\n\n(?!\*)/g, '<br><br>');
+            
+            // Replace single newlines with a line break (but not before list items)
+            processedDescription = processedDescription.replace(/\n(?!\*)/g, '<br>');
             
             // Use marked to convert Markdown to HTML with proper line breaks
             const markedOptions = {

@@ -106,7 +106,15 @@ const sampleData = [
     name: "Cloud Skills",
     quadrant: "platforms",
     ring: "0-6m",
-    description: "**Multi-cloud service navigation (AWS, Azure, GCP)**: Understanding the core services, pricing models, and management interfaces across major cloud providers. Essential for government teams to avoid vendor lock-in and leverage best-of-breed solutions while maintaining competitive procurement options.  \n**Infrastructure-as-Code basics (Terraform, CloudFormation)**\nAbility to define and manage infrastructure through code rather than manual configuration. Critical for ensuring reproducible, auditable, and version-controlled infrastructure deployments that meet government transparency and compliance requirements.\n**Container orchestration fundamentals (Kubernetes, Docker)**\nSkills in containerizing applications and managing container lifecycles at scale. Enables consistent deployment across environments while improving resource utilization and application portability across different cloud platforms.\n**API gateway management and service mesh basics**\nManaging traffic routing, security policies, and service communication in distributed systems. Essential for creating secure, scalable integration points between government services and external systems while maintaining proper access controls.",
+    description: "**Multi-cloud service navigation (AWS, Azure, GCP)**: Understanding the core services, pricing models, and management interfaces across major cloud providers. Essential for government teams to avoid vendor lock-in and leverage best-of-breed solutions while maintaining competitive procurement options.\n\n**Infrastructure-as-Code basics (Terraform, CloudFormation)**\nAbility to define and manage infrastructure through code rather than manual configuration. Critical for ensuring reproducible, auditable, and version-controlled infrastructure deployments that meet government transparency and compliance requirements.\n\n**Container orchestration fundamentals (Kubernetes, Docker)**\nSkills in containerizing applications and managing container lifecycles at scale. Enables consistent deployment across environments while improving resource utilization and application portability across different cloud platforms.\n\n**API gateway management and service mesh basics**\nManaging traffic routing, security policies, and service communication in distributed systems. Essential for creating secure, scalable integration points between government services and external systems while maintaining proper access controls.",
+    isNew: 'TRUE',
+    status: 'NEW'
+  },
+  {
+    name: "DevSecOps Practices",
+    quadrant: "culture",
+    ring: "0-6m",
+    description: "# DevSecOps Practices\n\nIntegrating security throughout the development lifecycle to ensure systems are secure by design.\n\n## Key Components\n\n* Automated security testing in CI/CD pipelines\n* Infrastructure as code security scanning\n* Container image vulnerability scanning\n* Secret management and rotation\n* Compliance as code implementation\n\n## Benefits\n\n* Reduces security vulnerabilities in production systems\n* Decreases time to remediate security issues\n* Improves overall system reliability and compliance\n* Enables faster delivery while maintaining security standards",
     isNew: 'TRUE',
     status: 'NEW'
   }
