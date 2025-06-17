@@ -121,15 +121,22 @@ class DataService {
   
   // Parse CSV data
   parseCSV(csvData) {
-    // Split the CSV data into lines
-    const lines = csvData.split('\n');
+    // First, we need to handle the CSV properly, including multi-line cells
+    // We'll use a more robust approach to parse the CSV
+    
+    // Process the CSV data to handle multi-line content within cells
+    const processedCsv = this.preprocessCsv(csvData);
+    
+    // Split the processed CSV data into lines
+    const lines = processedCsv.split('\n');
     if (lines.length <= 1) {
       throw new Error('Not enough rows found in the CSV data');
     }
     
     // Parse the header row (first line)
-    const headers = lines[0].split(',').map(header => 
-      header.trim().toLowerCase().replace(/^"(.*)"$/, '$1') // Remove quotes if present
+    const headerLine = lines[0];
+    const headers = this.parseCSVLine(headerLine).map(header => 
+      header.toLowerCase()
     );
     
     // Check if we have the required headers
@@ -166,7 +173,36 @@ class DataService {
     return data;
   }
   
-  // Helper function to parse a CSV line, handling quoted values
+  // Preprocess CSV to handle multi-line content within quoted cells
+  preprocessCsv(csvData) {
+    // This is a completely different approach that doesn't try to parse the CSV line by line
+    // Instead, we'll use a regex-based approach to handle the CSV parsing
+    
+    // First, normalize line endings
+    const normalizedCsv = csvData.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    
+    // We'll use a special marker that's unlikely to appear in the data
+    const NEWLINE_MARKER = '___NEWLINE_MARKER___';
+    
+    // Replace all newlines within quotes with our marker
+    // This regex finds all quoted fields and replaces newlines within them
+    const processedCsv = normalizedCsv.replace(/"([^"]|"")*"/g, (match) => {
+      // Replace all newlines in this quoted field with our marker
+      return match.replace(/\n/g, NEWLINE_MARKER);
+    });
+    
+    // Now we can safely split by real newlines
+    const lines = processedCsv.split('\n');
+    
+    // Process each line to restore our newlines
+    const processedLines = lines.map(line => {
+      return line.replace(new RegExp(NEWLINE_MARKER, 'g'), '\n');
+    });
+    
+    return processedLines.join('\n');
+  }
+  
+  // Helper function to parse a CSV line, handling quoted values and preserving newlines
   parseCSVLine(line) {
     const values = [];
     let inQuotes = false;
@@ -178,7 +214,8 @@ class DataService {
       if (char === '"') {
         inQuotes = !inQuotes;
       } else if (char === ',' && !inQuotes) {
-        values.push(currentValue.trim().replace(/^"(.*)"$/, '$1')); // Remove quotes if present
+        // When we hit a comma outside of quotes, we've reached the end of a value
+        values.push(this.cleanCsvValue(currentValue));
         currentValue = '';
       } else {
         currentValue += char;
@@ -186,9 +223,22 @@ class DataService {
     }
     
     // Add the last value
-    values.push(currentValue.trim().replace(/^"(.*)"$/, '$1')); // Remove quotes if present
+    values.push(this.cleanCsvValue(currentValue));
     
     return values;
+  }
+  
+  // Helper function to clean CSV values (trim and remove enclosing quotes if present)
+  cleanCsvValue(value) {
+    value = value.trim();
+    // Remove enclosing quotes if present, but preserve internal quotes
+    if (value.startsWith('"') && value.endsWith('"')) {
+      // Remove the first and last quote
+      value = value.substring(1, value.length - 1);
+      // Replace double quotes with single quotes (CSV escapes quotes by doubling them)
+      value = value.replace(/""/g, '"');
+    }
+    return value;
   }
   
   // Parse HTML data
@@ -239,7 +289,14 @@ class DataService {
       const item = {};
       cells.forEach((cell, index) => {
         if (index < headers.length) {
-          item[headers[index]] = cell.textContent.trim();
+          // Get the text content and preserve line breaks
+          let content = cell.textContent.trim();
+          
+          // Replace any HTML line breaks with actual newlines
+          // This ensures that multi-line content is properly preserved
+          content = content.replace(/\s*<br\s*\/?>\s*/gi, '\n');
+          
+          item[headers[index]] = content;
         }
       });
       

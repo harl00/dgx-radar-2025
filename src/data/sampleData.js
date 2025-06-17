@@ -5,7 +5,7 @@ const sampleData = [
     name: "React",
     quadrant: "legacy",
     ring: "6-12m",
-    description: "<p>A JavaScript library for building user interfaces.</p><p>React makes it painless to create interactive UIs.</p>",
+    description: "# React\n\nA JavaScript library for building user interfaces.\n\nReact makes it painless to create interactive UIs.\n\n## Key Features\n\n* Declarative views\n* Component-based architecture\n* Learn once, write anywhere",
     isNew: 'TRUE',
     status: 'NEW'
   },
@@ -31,7 +31,7 @@ const sampleData = [
     name: "Node.js",
     quadrant: "resiliency",
     ring: "6-12m",
-    description: "<p>A JavaScript runtime built on Chrome's V8 JavaScript engine.</p>",
+    description: "A JavaScript runtime built on Chrome's V8 JavaScript engine.\n\nNode.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient.\n\n```javascript\nconst http = require('http');\n\nconst server = http.createServer((req, res) => {\n  res.end('Hello World');\n});\n\nserver.listen(3000);\n```",
     isNew: 'TRUE'
   },
   {
@@ -56,7 +56,7 @@ const sampleData = [
     name: "Docker",
     quadrant: "culture",
     ring: "6-12m",
-    description: "<p>A platform for developing, shipping, and running applications in containers.</p>",
+    description: "A platform for developing, shipping, and running applications in containers.\n\n> Docker enables you to separate your applications from your infrastructure so you can deliver software quickly.\n\nBenefits include:\n1. Fast, consistent delivery of your applications\n2. Responsive deployment and scaling\n3. Running more workloads on the same hardware",
     isNew: 'TRUE'
   },
   {
@@ -81,7 +81,7 @@ const sampleData = [
     name: "TensorFlow",
     quadrant: "platforms",
     ring: "6-12m",
-    description: "<p>An end-to-end open source platform for machine learning.</p>",
+    description: "An end-to-end open source platform for machine learning.\n\nTensorFlow provides a comprehensive ecosystem of tools, libraries, and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML-powered applications.\n\n## Use Cases\n* Image classification\n* Natural language processing\n* Time series forecasting",
     isNew: 'TRUE'
   },
   {
@@ -101,6 +101,14 @@ const sampleData = [
     quadrant: "culture",
     ring: "1-2y",
     description: "<p>A distributed, RESTful search and analytics engine capable of addressing a growing number of use cases.</p>"
+  },
+  {
+    name: "Cloud Skills",
+    quadrant: "platforms",
+    ring: "0-6m",
+    description: "**Multi-cloud service navigation (AWS, Azure, GCP)**: Understanding the core services, pricing models, and management interfaces across major cloud providers. Essential for government teams to avoid vendor lock-in and leverage best-of-breed solutions while maintaining competitive procurement options.  \n**Infrastructure-as-Code basics (Terraform, CloudFormation)**\nAbility to define and manage infrastructure through code rather than manual configuration. Critical for ensuring reproducible, auditable, and version-controlled infrastructure deployments that meet government transparency and compliance requirements.\n**Container orchestration fundamentals (Kubernetes, Docker)**\nSkills in containerizing applications and managing container lifecycles at scale. Enables consistent deployment across environments while improving resource utilization and application portability across different cloud platforms.\n**API gateway management and service mesh basics**\nManaging traffic routing, security policies, and service communication in distributed systems. Essential for creating secure, scalable integration points between government services and external systems while maintaining proper access controls.",
+    isNew: 'TRUE',
+    status: 'NEW'
   }
 ];
 

@@ -103,6 +103,25 @@ const DetailContent = styled.div`
     margin-bottom: 15px;
     padding-left: 20px;
   }
+  
+  pre, code {
+    background-color: #f5f5f5;
+    border-radius: 3px;
+    padding: 0.2em 0.4em;
+    margin-bottom: 15px;
+    white-space: pre-wrap;
+  }
+  
+  blockquote {
+    border-left: 3px solid #ddd;
+    margin-left: 0;
+    padding-left: 1em;
+    color: #666;
+    margin-bottom: 15px;
+  }
+  
+  /* Ensure proper handling of line breaks */
+  white-space: pre-line;
 `;
 
 const DetailView = ({ item, onClose }) => {
@@ -196,7 +215,21 @@ const DetailView = ({ item, onClose }) => {
         
         <DetailContent>
           {item.description && (
-            <div dangerouslySetInnerHTML={{ __html: marked(item.description) }} />
+            <div dangerouslySetInnerHTML={{ 
+              __html: (() => {
+                // Process the description to ensure newlines are preserved
+                // First, replace any literal \n with actual newlines
+                let processedDescription = item.description.replace(/\\n/g, '\n');
+                
+                // Then replace any double newlines with a special marker
+                processedDescription = processedDescription.replace(/\n\n/g, '<br><br>');
+                
+                // Replace single newlines with a line break
+                processedDescription = processedDescription.replace(/\n/g, '<br>');
+                
+                return marked(processedDescription, { breaks: true, gfm: true });
+              })()
+            }} />
           )}
           
           {/* Display any additional metadata */}

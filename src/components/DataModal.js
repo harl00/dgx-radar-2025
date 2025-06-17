@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { marked } from 'marked';
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -120,6 +121,34 @@ const TableCell = styled.td`
   padding: 12px 15px;
   border-bottom: 1px solid #ddd;
   vertical-align: top;
+  
+  /* Styling for markdown content */
+  p {
+    margin: 0.5em 0;
+  }
+  
+  ul, ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+  }
+  
+  pre, code {
+    background-color: #f5f5f5;
+    border-radius: 3px;
+    padding: 0.2em 0.4em;
+  }
+  
+  blockquote {
+    border-left: 3px solid #ddd;
+    margin-left: 0;
+    padding-left: 1em;
+    color: #666;
+  }
+  
+  /* Handle multi-line content */
+  white-space: pre-line;
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 const NewBadge = styled.span`
@@ -204,7 +233,21 @@ const DataModal = ({ data, onClose }) => {
                           <NewBadge>New</NewBadge>
                         </>
                       ) : header === 'description' ? (
-                        <div dangerouslySetInnerHTML={{ __html: item[header] || '' }} />
+                        <div dangerouslySetInnerHTML={{ 
+                          __html: item[header] ? (() => {
+                            // Process the description to ensure newlines are preserved
+                            // First, replace any literal \n with actual newlines
+                            let processedDescription = item[header].replace(/\\n/g, '\n');
+                            
+                            // Then replace any double newlines with a special marker
+                            processedDescription = processedDescription.replace(/\n\n/g, '<br><br>');
+                            
+                            // Replace single newlines with a line break
+                            processedDescription = processedDescription.replace(/\n/g, '<br>');
+                            
+                            return marked(processedDescription, { breaks: true, gfm: true });
+                          })() : '' 
+                        }} />
                       ) : header === 'isNew' ? (
                         item[header] === 'TRUE' ? 'TRUE' : 'FALSE'
                       ) : (

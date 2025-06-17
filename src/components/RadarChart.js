@@ -24,6 +24,29 @@ const Tooltip = styled.div`
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
+  
+  /* Improved styling for markdown content */
+  p {
+    margin: 0.5em 0;
+  }
+  
+  ul, ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+  }
+  
+  pre, code {
+    background-color: #f5f5f5;
+    border-radius: 3px;
+    padding: 0.2em 0.4em;
+  }
+  
+  blockquote {
+    border-left: 3px solid #ddd;
+    margin-left: 0;
+    padding-left: 1em;
+    color: #666;
+  }
 `;
 
 // Note: We're using inline styles for the tooltip content instead of styled components
@@ -535,7 +558,7 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
               ${item.name}
             </div>
             ${metaItemsHtml}
-            <div id="tooltip-markdown-container" style="line-height: 1.4; color: #444; font-size: 13px;">
+            <div id="tooltip-markdown-container" style="line-height: 1.4; color: #444; font-size: 13px; max-height: 200px; overflow-y: auto; white-space: pre-line;">
             </div>
           `);
           
@@ -543,8 +566,23 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
         if (item.description && typeof item.description === 'string') {
           const container = document.getElementById('tooltip-markdown-container');
           if (container) {
-            // Use marked to convert Markdown to HTML
-            container.innerHTML = marked(item.description);
+            // Process the description to ensure newlines are preserved
+            // First, replace any literal \n with actual newlines
+            let processedDescription = item.description.replace(/\\n/g, '\n');
+            
+            // Then replace any double newlines with a special marker
+            processedDescription = processedDescription.replace(/\n\n/g, '<br><br>');
+            
+            // Replace single newlines with a line break
+            processedDescription = processedDescription.replace(/\n/g, '<br>');
+            
+            // Use marked to convert Markdown to HTML with proper line breaks
+            const markedOptions = {
+              breaks: true,
+              gfm: true
+            };
+            
+            container.innerHTML = marked(processedDescription, markedOptions);
           }
         }
       })
