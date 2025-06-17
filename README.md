@@ -136,6 +136,7 @@ The following enhancements have been implemented in this version:
    - Added comprehensive information display on hover
    - Styled to match the modal window's appearance
    - Added support for Markdown formatting in descriptions
+   - Enhanced handling of multi-line content and lists
 
 2. **Ring Visualization**
    - Changed the order of rings to create a logical progression
@@ -157,6 +158,110 @@ The following enhancements have been implemented in this version:
    - Added "View Raw Data" link in the footer
    - Created modal window for data display with proper formatting
    - Implemented JSON download functionality
+
+6. **Enhanced Markdown Support**
+   - Improved handling of multi-line content in both tooltips and modal windows
+   - Added proper support for unordered lists using asterisks (*)
+   - Configured all external links to open in new windows
+   - Preserved internal application navigation in the same window
+
+## Content Formatting
+
+The application supports rich content formatting in the description field using Markdown. Here are the supported formatting options:
+
+### Text Formatting
+
+- **Bold Text**: Use double asterisks or underscores: `**bold text**` or `__bold text__`
+- *Italic Text*: Use single asterisks or underscores: `*italic text*` or `_italic text_`
+- ~~Strikethrough~~: Use double tildes: `~~strikethrough~~`
+
+### Headings
+
+```markdown
+# Heading 1
+## Heading 2
+### Heading 3
+```
+
+### Lists
+
+Unordered lists can be created using asterisks, plus signs, or hyphens:
+
+```markdown
+* Item 1
+* Item 2
+  * Nested item 2.1
+  * Nested item 2.2
+```
+
+Ordered lists use numbers:
+
+```markdown
+1. First item
+2. Second item
+3. Third item
+```
+
+### Links
+
+Links will automatically open in a new window:
+
+```markdown
+[Link text](https://example.com)
+```
+
+### Code
+
+Inline code: `` `code` ``
+
+Code blocks:
+````markdown
+```javascript
+function example() {
+  return "Hello, world!";
+}
+```
+````
+
+### Blockquotes
+
+```markdown
+> This is a blockquote
+> It can span multiple lines
+```
+
+### Line Breaks and Paragraphs
+
+- Single line breaks are preserved and displayed as line breaks
+- Double line breaks create new paragraphs
+- Lists are properly formatted even when they appear after line breaks
+
+Example:
+```markdown
+First paragraph with
+a line break.
+
+Second paragraph.
+
+* List item 1
+* List item 2
+```
+
+### HTML Support
+
+Basic HTML tags are also supported:
+
+```html
+<p>This is a paragraph with <strong>bold text</strong>.</p>
+```
+
+### Best Practices for Content Formatting
+
+1. **Use Markdown for structure**: Prefer Markdown over HTML for better readability
+2. **Keep descriptions concise**: While the tooltips and modals support scrolling, shorter descriptions are more user-friendly
+3. **Use headings for organization**: Break up longer content with headings
+4. **Use lists for multiple points**: Lists improve readability for multiple related items
+5. **Include links to resources**: Add links to documentation, examples, or related resources
 
 ## Deployment
 
