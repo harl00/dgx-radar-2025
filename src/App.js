@@ -203,7 +203,10 @@ function App() {
       
       <Footer>
         <p>Technology Radar Visualization &copy; {new Date().getFullYear()}</p>
-        <DataLink onClick={() => setShowDataModal(true)}>
+        <DataLink 
+          onClick={() => setShowDataModal(true)} 
+          target="_self" // Ensure internal links don't open in a new window
+        >
           View Raw Data
         </DataLink>
       </Footer>

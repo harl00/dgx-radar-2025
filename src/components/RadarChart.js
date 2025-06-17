@@ -582,7 +582,13 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
               gfm: true
             };
             
-            container.innerHTML = marked(processedDescription, markedOptions);
+            // Convert markdown to HTML
+            let htmlContent = marked(processedDescription, markedOptions);
+            
+            // Add target="_blank" to all links
+            htmlContent = htmlContent.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:\s+[^>]*)?>/g, '<a href="$1" target="_blank" rel="noopener noreferrer">');
+            
+            container.innerHTML = htmlContent;
           }
         }
       })

@@ -227,7 +227,13 @@ const DetailView = ({ item, onClose }) => {
                 // Replace single newlines with a line break
                 processedDescription = processedDescription.replace(/\n/g, '<br>');
                 
-                return marked(processedDescription, { breaks: true, gfm: true });
+                // Convert markdown to HTML
+                let htmlContent = marked(processedDescription, { breaks: true, gfm: true });
+                
+                // Add target="_blank" to all links
+                htmlContent = htmlContent.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:\s+[^>]*)?>/g, '<a href="$1" target="_blank" rel="noopener noreferrer">');
+                
+                return htmlContent;
               })()
             }} />
           )}

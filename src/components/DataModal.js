@@ -245,7 +245,13 @@ const DataModal = ({ data, onClose }) => {
                             // Replace single newlines with a line break
                             processedDescription = processedDescription.replace(/\n/g, '<br>');
                             
-                            return marked(processedDescription, { breaks: true, gfm: true });
+                            // Convert markdown to HTML
+                            let htmlContent = marked(processedDescription, { breaks: true, gfm: true });
+                            
+                            // Add target="_blank" to all links
+                            htmlContent = htmlContent.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:\s+[^>]*)?>/g, '<a href="$1" target="_blank" rel="noopener noreferrer">');
+                            
+                            return htmlContent;
                           })() : '' 
                         }} />
                       ) : header === 'isNew' ? (
@@ -265,6 +271,7 @@ const DataModal = ({ data, onClose }) => {
           <DownloadButton 
             href={downloadUrl} 
             download="radar-data.json"
+            target="_self" // Ensure internal links don't open in a new window
           >
             Download JSON
           </DownloadButton>
