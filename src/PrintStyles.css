@@ -1,0 +1,113 @@
+/* Print-specific styles */
+@media print {
+  /* Reset page margins and ensure content fills the page */
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+  
+  /* Center SVG elements */
+  svg {
+    display: block !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+  }
+  
+  /* Hide browser UI elements when printing */
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+  }
+  
+  /* Ensure page breaks don't occur in the middle of elements */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  
+  img, svg {
+    page-break-inside: avoid;
+  }
+  
+  /* Ensure links show their URL when printed */
+  a:after {
+    content: " (" attr(href) ")";
+    font-size: 90%;
+    color: #333;
+  }
+  
+  /* Ensure background colors and images are printed */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Center chart container */
+  div[class*="ChartContainer"] {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+  }
+  
+  /* Hide UI elements that shouldn't be printed */
+  button, 
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Ensure text is readable when printed */
+  p, li, td, th {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  /* Ensure headings stand out */
+  h1 {
+    font-size: 24pt;
+  }
+  
+  h2 {
+    font-size: 18pt;
+  }
+  
+  h3 {
+    font-size: 14pt;
+  }
+  
+  /* Ensure code blocks are readable */
+  pre, code {
+    background-color: #f5f5f5 !important;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+  
+  /* Ensure tables are readable */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    page-break-inside: avoid;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  /* Ensure blockquotes are styled properly */
+  blockquote {
+    border-left: 3px solid #ddd;
+    padding-left: 10px;
+    margin-left: 0;
+    color: #666;
+  }
+  
+  /* Ensure proper spacing between sections */
+  section {
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+  }
+}

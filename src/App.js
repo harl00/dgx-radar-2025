@@ -8,6 +8,8 @@ import RadarChart from './components/RadarChart';
 import DetailView from './components/DetailView';
 import LoadingSpinner from './components/LoadingSpinner';
 import DataModal from './components/DataModal';
+import PrintView from './components/PrintView';
+import PrintSettings from './components/PrintSettings';
 
 // Import services
 import DataService from './services/DataService';
@@ -83,6 +85,23 @@ const DataLink = styled.button`
   }
 `;
 
+const PrintLink = styled(DataLink)`
+  margin-left: 20px;
+`;
+
+const SettingsOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+`;
+
 function App() {
   const [data, setData] = useState([]);
   const [rings, setRings] = useState([]);
@@ -91,6 +110,13 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDataModal, setShowDataModal] = useState(false);
+  const [showPrintSettings, setShowPrintSettings] = useState(false);
+  const [showPrintView, setShowPrintView] = useState(false);
+  const [printSettings, setPrintSettings] = useState({
+    title: '',
+    subtitle: '',
+    introduction: ''
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -156,6 +182,39 @@ function App() {
   const handleCloseDetail = () => {
     setSelectedItem(null);
   };
+  
+  const handleShowPrintSettings = () => {
+    setShowPrintSettings(true);
+  };
+  
+  const handleClosePrintSettings = () => {
+    setShowPrintSettings(false);
+  };
+  
+  const handlePrintSettingsSubmit = (settings) => {
+    setPrintSettings(settings);
+    setShowPrintSettings(false);
+    setShowPrintView(true);
+  };
+  
+  const handleClosePrintView = () => {
+    setShowPrintView(false);
+  };
+
+  // If print view is active, render only the print view
+  if (showPrintView) {
+    return (
+      <PrintView
+        data={data}
+        rings={rings}
+        quadrants={quadrants}
+        title={printSettings.title || "Digital Skills Visualisation"}
+        subtitle={printSettings.subtitle || "Interactive visualisation of projected impacts and concerns around Digital Skills in Government"}
+        introduction={printSettings.introduction}
+        onBack={handleClosePrintView}
+      />
+    );
+  }
 
   return (
     <AppContainer>
@@ -203,13 +262,34 @@ function App() {
       
       <Footer>
         <p>Technology Radar Visualization &copy; {new Date().getFullYear()}</p>
-        <DataLink 
-          onClick={() => setShowDataModal(true)} 
-          target="_self" // Ensure internal links don't open in a new window
-        >
-          View Raw Data
-        </DataLink>
+        <div>
+          <DataLink 
+            onClick={() => setShowDataModal(true)} 
+            target="_self"
+          >
+            View Raw Data
+          </DataLink>
+          <PrintLink
+            onClick={handleShowPrintSettings}
+            target="_self"
+          >
+            Print View
+          </PrintLink>
+        </div>
       </Footer>
+      
+      {showPrintSettings && (
+        <SettingsOverlay onClick={(e) => {
+          if (e.target === e.currentTarget) handleClosePrintSettings();
+        }}>
+          <PrintSettings
+            onSubmit={handlePrintSettingsSubmit}
+            onCancel={handleClosePrintSettings}
+            defaultTitle="Digital Skills Visualisation"
+            defaultSubtitle="Interactive visualisation of projected impacts and concerns around Digital Skills in Government"
+          />
+        </SettingsOverlay>
+      )}
     </AppContainer>
   );
 }
