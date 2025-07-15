@@ -478,16 +478,16 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
         .attr('cy', y)
         .attr('r', 5)
         .attr('fill', getColorForRing(item.ring))
-        .attr('stroke', item.isNew === 'TRUE' ? '#ffcc00' : '#fff') // Yellow stroke for new items
-        .attr('stroke-width', item.isNew === 'TRUE' ? 2 : 1) // Thicker stroke for new items
+        .attr('stroke', item.emergent === 'TRUE' ? '#ffcc00' : '#fff') // Yellow stroke for emergent items
+        .attr('stroke-width', item.emergent === 'TRUE' ? 2 : 1) // Thicker stroke for emergent items
         .attr('cursor', 'pointer')
         .attr('data-name', item.name)
         .attr('data-description', item.description || '')
         .attr('data-quadrant', item.quadrant)
         .attr('data-ring', item.ring);
       
-      // Add a star marker for new items
-      if (item.isNew === 'TRUE') {
+      // Add a star marker for emergent items
+      if (item.emergent === 'TRUE') {
         chart.append('text')
           .attr('x', x)
           .attr('y', y - 10)
@@ -540,11 +540,11 @@ const RadarChart = ({ data, rings, quadrants, onItemClick }) => {
           `;
         }
         
-        // Add "New" badge if item is new
-        if (item.isNew === 'TRUE') {
+        // Add "Emergent" badge if item is emergent
+        if (item.emergent === 'TRUE') {
           metaItemsHtml += `
             <div style="background-color: #ffcc00; padding: 3px 8px; border-radius: 4px; font-size: 12px; color: #333; font-weight: bold;">
-              New
+              Emergent
             </div>
           `;
         }

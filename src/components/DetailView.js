@@ -196,13 +196,13 @@ const DetailView = ({ item, onClose }) => {
             >
               Ring: {item.ring}
             </MetaItem>
-            {item.isNew === 'TRUE' && (
-              <MetaItem 
+            {item.emergent === 'TRUE' && (
+              <MetaItem
                 $bgColor="#ffcc00" 
                 $textColor="#333"
                 $isRing={false}
               >
-                New
+                Emergent
               </MetaItem>
             )}
             {item.status && (
@@ -249,8 +249,8 @@ const DetailView = ({ item, onClose }) => {
           
           {/* Display any additional metadata */}
           {Object.entries(item).map(([key, value]) => {
-            // Skip already displayed fields, isNew flag, and status
-            if (['name', 'quadrant', 'ring', 'description', 'isNew', 'status'].includes(key)) {
+            // Skip already displayed fields, emergent flag, and status
+            if (['name', 'quadrant', 'ring', 'description', 'emergent', 'status'].includes(key)) {
               return null;
             }
             

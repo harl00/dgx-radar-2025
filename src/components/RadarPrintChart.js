@@ -422,11 +422,11 @@ const RadarPrintChart = ({ data, rings, quadrants }) => {
         .attr('cy', y)
         .attr('r', 5)
         .attr('fill', getColorForRing(item.ring))
-        .attr('stroke', item.isNew === 'TRUE' ? '#ffcc00' : '#fff') // Yellow stroke for new items
-        .attr('stroke-width', item.isNew === 'TRUE' ? 2 : 1); // Thicker stroke for new items
+        .attr('stroke', item.emergent === 'TRUE' ? '#ffcc00' : '#fff') // Yellow stroke for emergent items
+        .attr('stroke-width', item.emergent === 'TRUE' ? 2 : 1); // Thicker stroke for emergent items
       
-      // Add a star marker for new items
-      if (item.isNew === 'TRUE') {
+      // Add a star marker for emergent items
+      if (item.emergent === 'TRUE') {
         chart.append('text')
           .attr('x', x)
           .attr('y', y - 10)

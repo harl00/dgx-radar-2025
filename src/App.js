@@ -8,6 +8,7 @@ import RadarChart from './components/RadarChart';
 import DetailView from './components/DetailView';
 import LoadingSpinner from './components/LoadingSpinner';
 import DataModal from './components/DataModal';
+import InstructionModal from './components/InstructionModal';
 import PrintView from './components/PrintView';
 import PrintSettings from './components/PrintSettings';
 
@@ -110,6 +111,7 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDataModal, setShowDataModal] = useState(false);
+  const [showInstructionModal, setShowInstructionModal] = useState(false);
   const [showPrintSettings, setShowPrintSettings] = useState(false);
   const [showPrintView, setShowPrintView] = useState(false);
   const [printSettings, setPrintSettings] = useState({
@@ -254,12 +256,25 @@ function App() {
         />
       )}
       
+      {showInstructionModal && (
+        <InstructionModal 
+          onClose={() => setShowInstructionModal(false)} 
+        />
+      )}
+      
       <Footer>
         <p>Technology Radar Visualization &copy; {new Date().getFullYear()}</p>
         <div>
           <DataLink 
+            onClick={() => setShowInstructionModal(true)} 
+            target="_self"
+          >
+            How to Use
+          </DataLink>
+          <DataLink 
             onClick={() => setShowDataModal(true)} 
             target="_self"
+            style={{ marginLeft: '20px' }}
           >
             View Raw Data
           </DataLink>

@@ -155,7 +155,7 @@ const TableCell = styled.td`
   overflow-y: auto;
 `;
 
-const NewBadge = styled.span`
+const EmergentBadge = styled.span`
   background-color: #ffcc00;
   color: #333;
   padding: 2px 6px;
@@ -221,7 +221,7 @@ const DataModal = ({ data, onClose }) => {
               <tr>
                 {headers.map(header => (
                   <TableHeader key={header}>
-                    {header === 'isNew' ? 'isNew' : header.charAt(0).toUpperCase() + header.slice(1)}
+                    {header === 'emergent' ? 'Emergent' : header.charAt(0).toUpperCase() + header.slice(1)}
                   </TableHeader>
                 ))}
               </tr>
@@ -231,10 +231,10 @@ const DataModal = ({ data, onClose }) => {
                 <TableRow key={index}>
                   {headers.map(header => (
                     <TableCell key={`${index}-${header}`}>
-                      {header === 'name' && item.isNew === 'TRUE' ? (
+                      {header === 'name' && item.emergent === 'TRUE' ? (
                         <>
                           {item[header]}
-                          <NewBadge>New</NewBadge>
+                          <EmergentBadge>Emergent</EmergentBadge>
                         </>
                       ) : header === 'description' ? (
                         <div dangerouslySetInnerHTML={{ 
@@ -263,7 +263,7 @@ const DataModal = ({ data, onClose }) => {
                             return htmlContent;
                           })() : '' 
                         }} />
-                      ) : header === 'isNew' ? (
+                      ) : header === 'emergent' ? (
                         item[header] === 'TRUE' ? 'TRUE' : 'FALSE'
                       ) : (
                         item[header] || ''
