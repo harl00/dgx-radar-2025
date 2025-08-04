@@ -273,6 +273,8 @@ const DataModal = ({ data, onClose }) => {
                             let processedReferences = item[header].replace(/\\n/g, '\n');
                             
                             // Process markdown list items (lines starting with *)
+                            // We need to ensure that lines starting with * are properly processed as list items
+                            // This regex looks for newlines followed by * and preserves them for markdown processing
                             processedReferences = processedReferences.replace(/\n\s*\*\s+/g, '\n* ');
                             
                             // Then replace any double newlines with a special marker (but not before list items)
