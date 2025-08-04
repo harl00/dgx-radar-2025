@@ -265,6 +265,31 @@ const DataModal = ({ data, onClose }) => {
                         }} />
                       ) : header === 'emergent' ? (
                         item[header] === 'TRUE' ? 'TRUE' : 'FALSE'
+                      ) : header.toLowerCase() === 'references' ? (
+                        <div dangerouslySetInnerHTML={{ 
+                          __html: item[header] ? (() => {
+                            // Process the references to ensure newlines are preserved
+                            // First, replace any literal \n with actual newlines
+                            let processedReferences = item[header].replace(/\\n/g, '\n');
+                            
+                            // Process markdown list items (lines starting with *)
+                            processedReferences = processedReferences.replace(/\n\s*\*\s+/g, '\n* ');
+                            
+                            // Then replace any double newlines with a special marker (but not before list items)
+                            processedReferences = processedReferences.replace(/\n\n(?!\*)/g, '<br><br>');
+                            
+                            // Replace single newlines with a line break (but not before list items)
+                            processedReferences = processedReferences.replace(/\n(?!\*)/g, '<br>');
+                            
+                            // Convert markdown to HTML
+                            let htmlContent = marked(processedReferences, { breaks: true, gfm: true });
+                            
+                            // Add target="_blank" to all links
+                            htmlContent = htmlContent.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:\s+[^>]*)?>/g, '<a href="$1" target="_blank" rel="noopener noreferrer">');
+                            
+                            return htmlContent;
+                          })() : '' 
+                        }} />
                       ) : (
                         item[header] || ''
                       )}

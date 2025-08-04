@@ -254,6 +254,42 @@ const DetailView = ({ item, onClose }) => {
               return null;
             }
             
+            // Handle References field with markdown processing
+            if (key.toLowerCase() === 'references') {
+              return (
+                <div key={key}>
+                  <h3>{key.charAt(0).toUpperCase() + key.slice(1)}</h3>
+                  <div dangerouslySetInnerHTML={{ 
+                    __html: (() => {
+                      if (!value) return '';
+                      
+                      // Process the references to ensure newlines are preserved
+                      // First, replace any literal \n with actual newlines
+                      let processedReferences = value.replace(/\\n/g, '\n');
+                      
+                      // Process markdown list items (lines starting with *)
+                      processedReferences = processedReferences.replace(/\n\s*\*\s+/g, '\n* ');
+                      
+                      // Then replace any double newlines with a special marker (but not before list items)
+                      processedReferences = processedReferences.replace(/\n\n(?!\*)/g, '<br><br>');
+                      
+                      // Replace single newlines with a line break (but not before list items)
+                      processedReferences = processedReferences.replace(/\n(?!\*)/g, '<br>');
+                      
+                      // Convert markdown to HTML
+                      let htmlContent = marked(processedReferences, { breaks: true, gfm: true });
+                      
+                      // Add target="_blank" to all links
+                      htmlContent = htmlContent.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:\s+[^>]*)?>/g, '<a href="$1" target="_blank" rel="noopener noreferrer">');
+                      
+                      return htmlContent;
+                    })()
+                  }} />
+                </div>
+              );
+            }
+            
+            // Handle other fields as plain text
             return (
               <div key={key}>
                 <h3>{key.charAt(0).toUpperCase() + key.slice(1)}</h3>

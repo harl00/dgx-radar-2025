@@ -115,6 +115,7 @@ const sampleData = [
     quadrant: "culture",
     ring: "0-6m",
     description: "# DevSecOps Practices\n\nIntegrating security throughout the development lifecycle to ensure systems are secure by design.\n\n## Key Components\n\n* Automated security testing in CI/CD pipelines\n* Infrastructure as code security scanning\n* Container image vulnerability scanning\n* Secret management and rotation\n* Compliance as code implementation\n\n## Benefits\n\n* Reduces security vulnerabilities in production systems\n* Decreases time to remediate security issues\n* Improves overall system reliability and compliance\n* Enables faster delivery while maintaining security standards",
+    references: "# References\n\n## Official Documentation\n\n* [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)\n* [OWASP DevSecOps Guideline](https://owasp.org/www-project-devsecops-guideline/)\n\n## Tools and Platforms\n\n* [Snyk - Developer Security Platform](https://snyk.io/)\n* [SonarQube - Code Quality and Security](https://www.sonarqube.org/)\n* [HashiCorp Vault - Secrets Management](https://www.vaultproject.io/)\n\n## Best Practices Articles\n\n* [The DevSecOps Playbook](https://example.com/devsecops-playbook)\n* [Implementing Security in CI/CD Pipelines](https://example.com/security-cicd)\n\n## Training Resources\n\n* [DevSecOps Foundation Course](https://example.com/training)\n* [SANS DevSecOps Training](https://www.sans.org/cyber-security-courses/)",
     emergent: 'TRUE',
     status: 'NEW'
   }
